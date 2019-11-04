@@ -1,0 +1,40 @@
+version: 2
+jobs:
+  build_and_test:
+    working_directory: ~/app
+    docker:
+     - image: circleci/python:3.7
+
+    steps:
+      - checkout
+      - run: 
+          name: Chwon
+          command: |
+            sudo chown -R circleci:circleci /usr/local/bin
+            sudo chown -R circleci:circleci /usr/local/lib/python3.7/site-packages            
+      - restore_cache:
+          key: deps1-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
+      - run:
+          name: Project Setup
+          command: |
+            sudo pip install pipenv
+            pipenv install --dev --system
+      - save_cache:
+          key: deps1-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
+          paths:
+            - ./venv
+            - "/usr/local/bin"
+            - "/usr/local/lib/python3.7/site-packages"
+      - run:
+          name: Run Code Style
+          command: pipenv run lint || exit 1
+      - persist_to_workspace:
+          root: ~/app
+          paths:
+            - .
+
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+      - build_and_test
