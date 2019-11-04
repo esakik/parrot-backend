@@ -1,0 +1,31 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+mypy = "==0.740"
+black = "==19.3b0"
+
+[packages]
+flask = "==1.1.*"
+flask-cors = "==3.0.*"
+flask-api = "==1.*"
+requests = "==2.22.*"
+beautifulsoup4 = "==4.6.0"
+lxml = "==4.4.*"
+gunicorn = "==19.9.*"
+spotipy = "==2.4.*"
+lyricsgenius = "==1.7.*"
+google-cloud-bigquery = "==1.21.*"
+firebase-admin = "==3.1.*"
+
+[requires]
+python_version = "3.7"
+
+[scripts]
+init = "pipenv install --dev"
+start = "python app.py"
+lint = "black . -l 120 --check --diff"
+format = "black . -l 120"
+type = "mypy ."
