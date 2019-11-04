@@ -24,7 +24,7 @@ steps:
       - 'build'
       - '-t'
       - 'gcr.io/${_GCP_PROJECT_ID}/parrot/backend'
-      - './backend/'
+      - '.'
     id: 'build docker image'
   - name: 'gcr.io/cloud-builders/docker'
     args: ["push", "gcr.io/${_GCP_PROJECT_ID}/parrot/backend"]
