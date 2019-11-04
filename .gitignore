@@ -1,0 +1,16 @@
+.DS_Store
+
+# Editor directories and files
+.idea
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+__pycache__
+
+# backend
+secrets.py
+.mypy_cache
+google-credentials.json
