@@ -1,9 +1,11 @@
-# PARROT/Backend
-Backend service of PARROT.
+# parrot-backend
+> The backend service of "PARROT".
 
 ## Environments
-- Programming language: Python 3.7
+- Language: Python 3.7
 - Framework: Flask 1.1
+- WSGI Server: Gunicorn
+- Deploy: Cloud Run
 
 ## Project setup
 ```
