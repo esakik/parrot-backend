@@ -1,11 +1,11 @@
 from firebase_admin import firestore
 
-from src.adapters.gateways.library_gateway import LibraryGateway
+from src.adapters.repositories.library_repository import LibraryRepository
 from src.entities.library import Library
 from src.entities.song import Song
 
 
-class LibraryRepository(LibraryGateway):
+class FirestoreLibraryRepository(LibraryRepository):
     def __init__(self, table_name="libraries"):
         self._table_name = table_name
         self._db = firestore.client()

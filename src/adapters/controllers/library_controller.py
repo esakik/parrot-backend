@@ -2,10 +2,13 @@ import json
 
 from flask import Blueprint, request
 
-from src.adapters.gateways.library_gateway import LibraryGateway
-from src.adapters.gateways.repositories.library_repository import LibraryRepository
+from src.adapters.repositories.impl.firestore_library_repository import FirestoreLibraryRepository
+from src.adapters.repositories.library_repository import LibraryRepository
 from src.exception.error import ValidationError, UnexpectedError
 from src.exception.handler import handle_validation_error, handle_success, handle_unexpected_error
+from src.usecases.library.add_song_usecase import AddSongUseCase
+from src.usecases.library.create_library_usecase import CreateLibraryUseCase
+from src.usecases.library.get_library_usecase import GetLibraryUseCase
 from src.usecases.library.interactors.add_song_interactor import AddSongInteractor
 from src.usecases.library.interactors.create_library_interactor import CreateLibraryInteractor
 from src.usecases.library.interactors.get_library_interactor import GetLibraryInteractor
@@ -25,19 +28,19 @@ def library_list():
         user_id = request.args.get("user_id")
 
         try:
-            gl_request = GetLibraryRequest(user_id)
+            get_library_request = GetLibraryRequest(user_id)
         except ValidationError as e:
             return handle_validation_error(e)
 
-        library_gateway: LibraryGateway = LibraryRepository()
-        gl_interactor = GetLibraryInteractor(library_gateway)
+        library_repo: LibraryRepository = FirestoreLibraryRepository()
+        get_library_usecase: GetLibraryUseCase = GetLibraryInteractor(library_repo)
 
         try:
-            gl_response: GetLibraryResponse = gl_interactor.handle(gl_request)
+            get_library_response: GetLibraryResponse = get_library_usecase.handle(get_library_request)
         except UnexpectedError as e:
             return handle_unexpected_error(e)
 
-        return handle_success(gl_response)
+        return handle_success(get_library_response)
 
 
 @library.route("/create", methods=["POST"])
@@ -46,19 +49,19 @@ def library_create():
         data = json.loads(request.get_data())
 
         try:
-            cl_request = CreateLibraryRequest(**data)
+            create_library_request = CreateLibraryRequest(**data)
         except ValidationError as e:
             return handle_validation_error(e)
 
-        library_gateway: LibraryGateway = LibraryRepository()
-        cl_interactor = CreateLibraryInteractor(library_gateway)
+        library_repo: LibraryRepository = FirestoreLibraryRepository()
+        create_library_usecase: CreateLibraryUseCase = CreateLibraryInteractor(library_repo)
 
         try:
-            cl_response: CreateLibraryResponse = cl_interactor.handle(cl_request)
+            create_library_response: CreateLibraryResponse = create_library_usecase.handle(create_library_request)
         except UnexpectedError as e:
             return handle_unexpected_error(e)
 
-        return handle_success(cl_response)
+        return handle_success(create_library_response)
 
 
 @library.route("/add/song", methods=["POST"])
@@ -67,16 +70,16 @@ def library_add_song():
         data = json.loads(request.get_data())
 
         try:
-            as_request = AddSongRequest(**data)
+            add_song_request = AddSongRequest(**data)
         except ValidationError as e:
             return handle_validation_error(e)
 
-        library_gateway: LibraryGateway = LibraryRepository()
-        as_interactor = AddSongInteractor(library_gateway)
+        library_repo: LibraryRepository = FirestoreLibraryRepository()
+        add_song_usecase: AddSongUseCase = AddSongInteractor(library_repo)
 
         try:
-            as_response: AddSongResponse = as_interactor.handle(as_request)
+            add_song_response: AddSongResponse = add_song_usecase.handle(add_song_request)
         except UnexpectedError as e:
             return handle_unexpected_error(e)
 
-        return handle_success(as_response)
+        return handle_success(add_song_response)
