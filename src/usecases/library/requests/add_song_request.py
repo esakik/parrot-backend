@@ -11,6 +11,7 @@ class AddSongRequest:
     lyrics: str
     jacket_image_url: str
 
+    # TODO Cerberusでバリデーション
     def __post_init__(self):
         if not self.user_id:
             raise ValidationError("user id is required.")

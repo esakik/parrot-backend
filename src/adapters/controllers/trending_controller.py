@@ -2,6 +2,7 @@ from flask import Blueprint, request
 
 from src.exception.error import ValidationError, UnexpectedError
 from src.exception.handler import handle_validation_error, handle_unexpected_error, handle_success
+from src.usecases.trending.get_trending_usecase import GetTrendingUseCase
 from src.usecases.trending.interactors.get_trending_interactor import GetTrendingInteractor
 from src.usecases.trending.requests.get_trending_request import GetTrendingRequest
 
@@ -15,15 +16,15 @@ def trending_list():
         offset = request.args.get("offset")
 
         try:
-            gt_request = GetTrendingRequest(limit, offset)
+            get_trending_request = GetTrendingRequest(limit, offset)
         except ValidationError as e:
             return handle_validation_error(e)
 
-        gt_interactor = GetTrendingInteractor()
+        get_trending_usecase: GetTrendingUseCase = GetTrendingInteractor()
 
         try:
-            gt_response = gt_interactor.handle(gt_request)
+            get_trending_response = get_trending_usecase.handle(get_trending_request)
         except UnexpectedError as e:
             return handle_unexpected_error(e)
 
-        return handle_success(gt_response)
+        return handle_success(get_trending_response)

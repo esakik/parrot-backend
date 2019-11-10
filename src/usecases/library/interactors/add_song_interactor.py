@@ -1,6 +1,6 @@
 import logging
 
-from src.adapters.gateways.library_gateway import LibraryGateway
+from src.adapters.repositories.library_repository import LibraryRepository
 from src.entities.library import Library
 from src.entities.song import Song
 from src.exception.error import UnexpectedError
@@ -10,12 +10,12 @@ from src.usecases.library.responses.add_song_response import AddSongResponse
 
 
 class AddSongInteractor(AddSongUseCase):
-    def __init__(self, library_gateway: LibraryGateway):
-        self._library_gateway = library_gateway
+    def __init__(self, library_repo: LibraryRepository):
+        self._library_repo = library_repo
 
     def handle(self, request: AddSongRequest) -> AddSongResponse:
         try:
-            user_id = self._library_gateway.update(
+            user_id = self._library_repo.update(
                 Library(
                     user_id=request.user_id,
                     songs=[
