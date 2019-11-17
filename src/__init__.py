@@ -8,7 +8,7 @@ from src.adapters.controllers.recommended_controller import recommended
 from src.adapters.controllers.song_controller import song
 from src.adapters.controllers.trending_controller import trending
 
-config = {"development": "config.DevelopmentConfig", "production": "config.ProductionConfig"}
+config = {"production": "config.ProdConfig", "development": "config.DevConfig", "test": "config.TestConfig"}
 
 secrets = "secrets.Secrets"
 
