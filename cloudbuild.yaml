@@ -1,24 +1,24 @@
 steps:
   - name: 'gcr.io/cloud-builders/gcloud'
     args:
-      - kms
-      - decrypt
-      - --ciphertext-file=./secrets.py.encrypted
-      - --plaintext-file=./secrets.py
-      - --location=us-central1
-      - --keyring=secrets-key-ring
-      - --key=secrets-key
-    id: decrypt secrets
+      - 'kms'
+      - 'decrypt'
+      - '--ciphertext-file=./secrets.py.encrypted'
+      - '--plaintext-file=./secrets.py'
+      - '--location=us-central1'
+      - '--keyring=secrets-key-ring'
+      - '--key=secrets-key'
+    id: 'decrypt secrets'
   - name: 'gcr.io/cloud-builders/gcloud'
     args:
-      - kms
-      - decrypt
-      - --ciphertext-file=./google-credentials.json.encrypted
-      - --plaintext-file=./google-credentials.json
-      - --location=us-central1
-      - --keyring=secrets-key-ring
-      - --key=secrets-key
-    id: decrypt google credentials
+      - 'kms'
+      - 'decrypt'
+      - '--ciphertext-file=./google-credentials.json.encrypted'
+      - '--plaintext-file=./google-credentials.json'
+      - '--location=us-central1'
+      - '--keyring=secrets-key-ring'
+      - '--key=secrets-key'
+    id: 'decrypt google credentials'
   - name: 'gcr.io/cloud-builders/docker'
     args:
       - 'build'
@@ -27,7 +27,9 @@ steps:
       - '.'
     id: 'build docker image'
   - name: 'gcr.io/cloud-builders/docker'
-    args: ["push", "gcr.io/${_GCP_PROJECT_ID}/parrot/backend"]
+    args:
+      - 'push'
+      - 'gcr.io/${_GCP_PROJECT_ID}/parrot/backend'
     id: 'push docker image'
   - name: 'gcr.io/cloud-builders/gcloud'
     args:
