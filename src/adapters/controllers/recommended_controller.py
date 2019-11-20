@@ -1,10 +1,8 @@
 from flask import Blueprint, request
 
-from src.exception.error import ValidationError, UnexpectedError
-from src.exception.handler import handle_validation_error, handle_unexpected_error, handle_success
-from src.usecases.recommended.get_recommended_usecase import GetRecommendedUseCase
-from src.usecases.recommended.interactors.get_recommended_interactor import GetRecommendedInteractor
-from src.usecases.recommended.requests.get_recommended_request import GetRecommendedRequest
+from src.adapters.controllers.handlers.handler import handle_success
+from src.request_objects.recommended.get_recommended_request import GetRecommendedRequest
+from src.use_cases.recommended.impl.get_recommended_use_case import GetRecommendedUseCase
 
 recommended = Blueprint("recommended", __name__, url_prefix="/recommended")
 
@@ -15,16 +13,9 @@ def recommended_list():
         limit = request.args.get("limit")
         offset = request.args.get("offset")
 
-        try:
-            get_recommended_request = GetRecommendedRequest(limit, offset)
-        except ValidationError as e:
-            return handle_validation_error(e)
+        req = GetRecommendedRequest(limit, offset)
+        get_recommended = GetRecommendedUseCase()
 
-        get_recommended_usecase: GetRecommendedUseCase = GetRecommendedInteractor()
+        res = get_recommended.handle(req)
 
-        try:
-            get_recommended_response = get_recommended_usecase.handle(get_recommended_request)
-        except UnexpectedError as e:
-            return handle_unexpected_error(e)
-
-        return handle_success(get_recommended_response)
+        return handle_success(res)

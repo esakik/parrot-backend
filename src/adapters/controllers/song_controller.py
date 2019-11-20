@@ -1,16 +1,12 @@
 from flask import Blueprint, request
 
-from src.exception.error import ValidationError, UnexpectedError
-from src.exception.handler import handle_validation_error, handle_unexpected_error, handle_success
-from src.usecases.song.artist_search_usecase import ArtistSearchUseCase
-from src.usecases.song.artist_title_search_usecase import ArtistTitleSearchUseCase
-from src.usecases.song.interactors.artist_search_interactor import ArtistSearchInteractor
-from src.usecases.song.interactors.artist_title_search_interactor import ArtistTitleSearchInteractor
-from src.usecases.song.interactors.title_search_interactor import TitleSearchInteractor
-from src.usecases.song.requests.artist_search_request import ArtistSearchRequest
-from src.usecases.song.requests.artist_title_search_request import ArtistTitleSearchRequest
-from src.usecases.song.requests.title_search_request import TitleSearchRequest
-from src.usecases.song.title_search_usecase import TitleSearchUseCase
+from src.adapters.controllers.handlers.handler import handle_success
+from src.request_objects.song.artist_search_request import ArtistSearchRequest
+from src.request_objects.song.artist_title_search_request import ArtistTitleSearchRequest
+from src.request_objects.song.title_search_request import TitleSearchRequest
+from src.use_cases.song.impl.artist_search_use_case import ArtistSearchUseCase
+from src.use_cases.song.impl.artist_title_search_use_case import ArtistTitleSearchUseCase
+from src.use_cases.song.impl.title_search_use_case import TitleSearchUseCase
 
 song = Blueprint("song", __name__, url_prefix="/song")
 
@@ -21,19 +17,12 @@ def artist_title_search():
         artist = request.args.get("artist")
         title = request.args.get("title")
 
-        try:
-            artist_title_search_request = ArtistTitleSearchRequest(artist, title)
-        except ValidationError as e:
-            return handle_validation_error(e)
+        req = ArtistTitleSearchRequest(artist, title)
+        search_by_artist_and_title = ArtistTitleSearchUseCase()
 
-        artist_title_search_usecase: ArtistTitleSearchUseCase = ArtistTitleSearchInteractor()
+        res = search_by_artist_and_title.handle(req)
 
-        try:
-            artist_title_search_response = artist_title_search_usecase.handle(artist_title_search_request)
-        except UnexpectedError as e:
-            return handle_unexpected_error(e)
-
-        return handle_success(artist_title_search_response)
+        return handle_success(res)
 
 
 @song.route("/artist/search", methods=["GET"])
@@ -41,19 +30,12 @@ def artist_search():
     if request.method == "GET":
         artist = request.args.get("artist")
 
-        try:
-            artist_search_request = ArtistSearchRequest(artist)
-        except ValidationError as e:
-            return handle_validation_error(e)
+        req = ArtistSearchRequest(artist)
+        search_by_artist = ArtistSearchUseCase()
 
-        artist_search_usecase: ArtistSearchUseCase = ArtistSearchInteractor()
+        res = search_by_artist.handle(req)
 
-        try:
-            artist_search_response = artist_search_usecase.handle(artist_search_request)
-        except UnexpectedError as e:
-            return handle_unexpected_error(e)
-
-        return handle_success(artist_search_response)
+        return handle_success(res)
 
 
 @song.route("/title/search", methods=["GET"])
@@ -61,16 +43,9 @@ def title_search():
     if request.method == "GET":
         title = request.args.get("title")
 
-        try:
-            title_search_request = TitleSearchRequest(title)
-        except ValidationError as e:
-            return handle_validation_error(e)
+        req = TitleSearchRequest(title)
+        search_by_title = TitleSearchUseCase()
 
-        title_search_usecase: TitleSearchUseCase = TitleSearchInteractor()
+        res = search_by_title.handle(req)
 
-        try:
-            title_search_response = title_search_usecase.handle(title_search_request)
-        except UnexpectedError as e:
-            return handle_unexpected_error(e)
-
-        return handle_success(title_search_response)
+        return handle_success(res)
