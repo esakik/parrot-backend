@@ -1,12 +1,9 @@
 from flask import Blueprint, request
 
+from src.adapters.controllers.handlers.handler import handle_success
 from src.adapters.repositories.impl.bigquery_word_repository import BigQueryWordRepository
-from src.adapters.repositories.word_repository import WordRepository
-from src.exception.error import ValidationError
-from src.exception.handler import handle_validation_error, handle_success
-from src.usecases.pronunciation.get_pronunciation_usecase import GetPronunciationUseCase
-from src.usecases.pronunciation.interactors.get_pronunciation_interactor import GetPronunciationInteractor
-from src.usecases.pronunciation.requests.get_pronunciation_request import GetPronunciationRequest
+from src.request_objects.pronunciation.get_pronunciation_request import GetPronunciationRequest
+from src.use_cases.pronunciation.impl.get_pronunciation_use_case import GetPronunciationUseCase
 
 pronunciation = Blueprint("pronunciation", __name__, url_prefix="/pronunciation")
 
@@ -16,15 +13,11 @@ def pronunciation_search():
     if request.method == "GET":
         words = request.args.get("words")
 
-        try:
-            get_pronunciation_request = GetPronunciationRequest(words)
-        except ValidationError as e:
-            return handle_validation_error(e)
+        req = GetPronunciationRequest(words)
 
-        word_repo: WordRepository = BigQueryWordRepository()
+        repo = BigQueryWordRepository()
+        get_pronunciation = GetPronunciationUseCase(repo)
 
-        get_pronunciation_usecase: GetPronunciationUseCase = GetPronunciationInteractor(word_repo)
+        res = get_pronunciation.handle(req)
 
-        get_pronunciation_response = get_pronunciation_usecase.handle(get_pronunciation_request)
-
-        return handle_success(get_pronunciation_response)
+        return handle_success(res)

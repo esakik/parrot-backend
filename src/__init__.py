@@ -2,6 +2,7 @@ import firebase_admin
 from flask import Flask
 from flask_cors import CORS
 
+from src.adapters.controllers.error_controller import errors
 from src.adapters.controllers.library_controller import library
 from src.adapters.controllers.pronunciation_controller import pronunciation
 from src.adapters.controllers.recommended_controller import recommended
@@ -22,6 +23,7 @@ def create_app() -> Flask:
 
     firebase_admin.initialize_app()
 
+    app.register_blueprint(errors)
     app.register_blueprint(library)
     app.register_blueprint(pronunciation)
     app.register_blueprint(recommended)
